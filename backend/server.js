@@ -1,7 +1,8 @@
 const express = require('express');
 const cors = require('cors'); // חשוב כדי שהאפליקציה תוכל לגשת לשרת
+const bcrypt = require('bcrypt'); // נוסף כדי שיהיה ניתן להצפין את סיסמת האדמין
 const app = express();
-const db = require('./database'); // או הנתיב המדויק שבו מוגדר ומוצא ה-db אצלך בפרויקט
+const db = require('./database'); // הנתיב למסד הנתונים אצלך בפרויקט
 
 app.use(cors());
 app.use(express.json());
@@ -13,16 +14,19 @@ app.use('/api/transactions', transactionsRoutes);
 app.get('/', (req, res) => {
     res.send('🚀 LION GROUP CRM Backend is running successfully!');
 });
+
 const createDefaultAdmin = async () => {
     const adminUsername = 'admin';
     const plainPassword = '123456';
 
-    // בדיקה האם האדמין כבר קיים
-    db.get(`SELECT * FROM users WHERE username = ?`, [adminUsername], async (err, row) => {
+    // שימוש ב-db.all במקום db.get כדי למנוע שגיאת פונקציה חסרה
+    db.all(`SELECT * FROM users WHERE username = ?`, [adminUsername], async (err, rows) => {
         if (err) {
             console.error('שגיאה בבדיקת קיום אדמין אוטומטי:', err.message);
             return;
         }
+
+        const row = rows && rows.length > 0 ? rows[0] : null;
 
         if (!row) {
             // אם האדמין לא קיים, ניצור אותו
@@ -48,8 +52,8 @@ const createDefaultAdmin = async () => {
     });
 };
 
-
 createDefaultAdmin();
+
 const PORT = process.env.PORT || 3000;
 app.listen(PORT, () => {
     console.log(`Server running on http://localhost:${PORT}`);
