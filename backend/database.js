@@ -25,18 +25,3 @@ db.serialize(() => {
     )
   `);
 });
-fetch('https://app-w9kf.onrender.com/api/auth/register', {
-    method: 'POST',
-    headers: {
-        'Content-Type': 'application/json'
-    },
-    body: JSON.stringify({
-        username: 'admin',
-        password: '123456',
-        role: 'superadmin'
-    })
-})
-.then(response => response.json())
-.then(data => console.log('תגובת השרת:', data))
-.catch(error => console.error('שגיאה:', error));
-module.exports = db;
