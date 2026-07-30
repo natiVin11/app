@@ -1,6 +1,7 @@
 const express = require('express');
 const cors = require('cors'); // חשוב כדי שהאפליקציה תוכל לגשת לשרת
 const app = express();
+const db = require('./database'); // או הנתיב המדויק שבו מוגדר ומוצא ה-db אצלך בפרויקט
 
 app.use(cors());
 app.use(express.json());
